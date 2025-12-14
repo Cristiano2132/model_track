@@ -1,175 +1,266 @@
-# model_track
+# model-track-cr
 
-O **model_track** é uma biblioteca Python voltada para o controle, versionamento e acompanhamento de modelos de Machine Learning ao longo de seu ciclo de vida.  
-Ela tem como objetivo oferecer uma interface simples e extensível para registrar métricas, parâmetros, artefatos e metadados de maneira consistente, favorecendo rastreabilidade e boas práticas de engenharia.
+O **model-track-cr** é uma biblioteca Python voltada para **binning, WOE, estabilidade e monitoramento de variáveis** em modelos de Machine Learning, com foco em **modelos de crédito e risco**.
 
-O projeto segue uma abordagem **Test-Driven Development (TDD)** desde o início, garantindo qualidade, segurança na evolução e documentação viva por meio dos testes.
+O projeto foi construído seguindo rigorosamente **Test-Driven Development (TDD)**, garantindo:
+- qualidade de código
+- segurança para refatorações
+- documentação viva através dos testes
 
 ---
 
 ## 📦 Estrutura do Projeto
-
-    model_track/
-    │
-    ├── model_track/
-    │   └── …
-    ├── tests/
-    │   └── …
-    ├── pyproject.toml
-    ├── pytest.ini
-    ├── .coveragerc
-    ├── README.md
-    └── Makefile
-
-O projeto utiliza:
-
-- **Poetry** para gestão de dependências e ambiente
-- **pytest** para testes
-- **pytest-cov** + **coverage** para cobertura
-- **Makefile** para automatizar rotinas (testes, instalação, limpeza etc.)
+```bash
+.
+├── Makefile
+├── README.md
+├── exemplo_uso.ipynb
+├── poetry.lock
+├── pyproject.toml
+├── pytest.ini
+├── src
+│   └── model_track
+│       ├── binning
+│       ├── encoding
+│       ├── stability
+│       ├── stats
+│       └── woe
+├── tests
+│   ├── conftest.py
+│   ├── test_bin_applier.py
+│   ├── test_tree_binning.py
+│   ├── test_quantile_binning.py
+│   ├── test_summary.py
+│   └── test_woe.py
+└── uv.lock
+````
 
 ---
 
+## 🧰 Ferramentas Utilizadas
+
+- **Poetry** — gestão de dependências e versionamento
+- **pytest** — testes automatizados
+- **pytest-cov / coverage** — cobertura de código
+- **Makefile** — automação de rotinas
+- **GitHub Actions** — CI/CD
+- **Git Flow** — fluxo de desenvolvimento e release
+
+---
 ## 🚀 Instalação
+
 
 Clone o repositório:
 
 ```bash
-git clone https://github.com/SEU_USUARIO/model_track.git
-cd model_track
+git clone https://github.com/SEU_USUARIO/model-track-cr.git
+cd model-track-cr
+```
+Instale as dependências:
 
-Instale o ambiente com:
-
-make install
-
-Ou diretamente:
-
+```bash
 poetry install
 ```
+Ou via Makefile:
+```bash
+make install
+```
 
-⸻
 
-🧪 Executando Testes
+🧪 Testes e Qualidade
 
-Testes:
-
+Rodar testes:
 ```bash
 make test
 ```
-
-Cobertura de código (com relatório HTML):
-
+Rodar testes com cobertura:
 ```bash
 make cov
 ```
+O relatório HTML ficará disponível em:
 
-Limpeza de caches:
 
-```bash
-make clean
-```
+`htmlcov/index.html`
 
-⸻
 
-🛠 Desenvolvimento
 
-1️⃣ Ativar o ambiente virtual
 
+🛠 Desenvolvimento (TDD)
+
+1️⃣ Ativar ambiente virtual
 ```bash
 poetry shell
-```
-2️⃣ Desenvolvimento orientado a testes (TDD)
+````
 
-O fluxo recomendado é:
-	1.	Criar/editar um teste em tests/
-	2.	Rodar:
+2️⃣ Fluxo TDD recomendado
 
+1. Criar ou atualizar um teste em tests/
+2. Rodar:
 ```bash
 make test
 ```
 
-	3.	Implementar o código mínimo para o teste passar
-	4.	Refatorar com segurança usando os testes
-	5.	Gerar relatório de cobertura (opcional):
-
+3.	Implementar o código mínimo para passar
+4.	Refatorar com segurança
+5.	Validar cobertura:
 ```bash
 make cov
 ```
 
 
-⸻
+
 
 🧩 Fixtures Globais
 
-Todas as fixtures compartilhadas devem ficar em:
+Fixtures compartilhadas devem ficar em:
 
-tests/conftest.py
+`tests/conftest.py`
 
-Esse arquivo é carregado automaticamente pelo pytest.
+O `pytest` carrega esse arquivo automaticamente.
 
-⸻
+---
+## 🤝 Como Contribuir (Git Flow)
 
-🤝 Como Contribuir
+🔹 Regras Importantes
+*	❌ Não é permitido push direto na main
+*	✅ Toda mudança passa por Pull Request
+*	✅ CI deve estar verde
+*	✅ Testes obrigatórios
+*	✅ TDD é mandatório
 
-Contribuições são bem-vindas! Siga os passos abaixo para manter a consistência do projeto.
 
-1. Abra um fork do repositório
 
-Crie seu fork e baixe localmente:
-
-```bash
-git clone https://github.com/SEU_USUARIO/model_track.git
-```
-
-2. Crie uma nova branch
+1️⃣ Criar branch a partir da main
 
 ```bash
+git checkout main
+git pull origin main
 git checkout -b feature/nome-da-feature
 ```
+Ou para correções:
+```bash
+git checkout -b fix/nome-do-fix
+```
 
-3. Siga o fluxo TDD
-
-Qualquer funcionalidade nova deve vir acompanhada de testes.
-
-4. Garanta que tudo passa
+2️⃣ Desenvolver seguindo TDD
 
 ```bash
 make test
-```
-
-5. Garanta 100% de cobertura para módulos novos
-```bash
 make cov
 ```
 
-O relatório HTML ficará em:
 
-htmlcov/index.html
+3️⃣ Commitar mudanças
 
-6. Abra um Pull Request
+```bash
+git add .
+git commit -m "feat: descrição clara da mudança"
+```
 
-O PR deve incluir:
-*	descrição clara da mudança
-*	justificativa
-*	exemplos de uso, quando necessário
 
-Os PRs só serão aceitos se:
-*	todos os testes passarem
-*	não quebrarem a cobertura mínima configurada
-*	seguirem a filosofia de TDD
 
-⸻
+4️⃣ Push da branch
+```bash
+git push origin feature/nome-da-feature
+```
+
+5️⃣ Abrir Pull Request
+
+O PR deve conter:
+*	descrição clara
+*	motivação
+*	exemplos de uso (se aplicável)
+
+O PR só será aceito se:
+*	CI passar
+*	cobertura mínima for respeitada
+*	arquitetura estiver consistente
+
+---
+🚢 Processo de Release e Publicação (Git Flow + Poetry)
+____
+🔖 Versionamento Semântico
+
+Usamos Poetry para versionamento:
+*	patch → correções (0.1.0 → 0.1.1)
+*	minor → novas funcionalidades (0.1.0 → 0.2.0)
+*	major → breaking changes (1.0.0 → 2.0.0)
+
+
+
+1️⃣ Criar branch de release
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b release/patch
+```
+
+
+
+2️⃣ Atualizar versão automaticamente
+```bash
+poetry version patch
+```
+Exemplo:
+
+Bumping version from `0.1.0` to `0.1.1`
+
+
+
+
+3️⃣ Commit da versão
+```bash
+git add pyproject.toml
+git commit -m "Bump version to 0.1.1"
+```
+
+
+
+4️⃣ Push da branch de release
+```bash
+git push origin release/patch
+```
+
+
+
+5️⃣ Abrir Pull Request → main
+*	Base: `main`
+*	Compare: `release/patch`
+
+A CI será executada automaticamente.
+
+
+
+6️⃣ Merge do PR
+
+Após aprovação e CI verde.
+
+
+
+7️⃣ Criar tag e publicar
+```bash
+git checkout main
+git pull origin main
+
+git tag v0.1.1
+git push origin v0.1.1
+```
+👉 A GitHub Action de publish será disparada automaticamente
+👉 O pacote será publicado no PyPI
+
+
 
 📚 Roadmap (em evolução)
-*	Definição do core API para tracking de modelos
-*	Adição de backend de armazenamento (filesystem, SQL, NoSQL)
-*	Componente de versionamento automático
-*	CLI com comandos para consulta e registro
-*	Templates automáticos para experimentos
+*	Estabilidade de WOE por safra
+*	PSI automático
+*	Seleção de variáveis por estabilidade
+*	CLI para análises rápidas
+*	Integração com pipelines de crédito
+*	Relatórios automáticos
 
-⸻
 
 📝 Licença
 
-Escolha recomendada: MIT, Apache 2.0 ou BSD-3-Clause.
+MIT
 
