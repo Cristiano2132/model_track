@@ -218,6 +218,167 @@ git push origin vx.x.xxx
 👉 O pacote será publicado no PyPI
 
 
+🧭 Guia Prático de Decisão — Para Onde Enviar Minha Mudança?
+
+🎯 Regra de Ouro
+	•	develop → integração contínua, mudanças em evolução
+	•	main → código estável, pronto para release
+	•	tag → dispara publicação (PyPI)
+
+
+📌 Situações Comuns e Decisão Correta
+
+📝 Situação 1 — Atualização de README
+
+Exemplos
+	•	adicionar exemplos de uso
+	•	corrigir instruções de Git Flow
+	•	documentar CI, TDD ou versionamento
+
+✅ Enviar para: develop
+❌ Não enviar direto para: main
+
+📌 Motivo
+Documentação pode evoluir, receber ajustes e revisões antes de ser considerada final.
+
+
+⚙️ Situação 2 — Ajuste ou melhoria no CI
+
+Exemplos
+	•	adicionar suporte a Python 3.13
+	•	alterar matriz de testes
+	•	ajustar cache ou dependências
+
+✅ Enviar para: develop
+❌ Não enviar direto para: main
+
+📌 Motivo
+CI é parte da infraestrutura e pode exigir iterações até ficar estável.
+
+
+🧪 Situação 3 — Novo teste (sem alterar código)
+
+Exemplos
+	•	adicionar testes de borda
+	•	aumentar cobertura
+	•	corrigir teste frágil
+
+✅ Enviar para: develop
+
+📌 Motivo
+Testes fazem parte do ciclo de integração contínua.
+
+
+🧩 Situação 4 — Nova funcionalidade
+
+Exemplos
+	•	novo método de binning
+	•	novo cálculo de estabilidade
+	•	nova métrica estatística
+
+✅ Enviar para: develop
+📌 via feature/*
+
+❌ Nunca direto para: main
+
+
+
+🐞 Situação 5 — Correção de bug (não crítico)
+
+Exemplos
+	•	erro de cálculo em edge case
+	•	bug detectado em teste
+	•	ajuste interno sem impacto imediato
+
+✅ Enviar para: develop
+📌 via fix/*
+
+
+🚨 Situação 6 — Hotfix crítico em produção
+
+Exemplos
+	•	bug quebra import do pacote
+	•	erro que impede uso da lib publicada
+
+✅ Enviar para: main
+📌 via hotfix/*
+
+Depois:
+	•	merge também em develop
+
+📌 Motivo
+Produção está quebrada → correção imediata.
+
+
+
+🔖 Situação 7 — Atualização de versão
+
+Exemplos
+	•	poetry version patch
+	•	poetry version minor
+
+✅ Enviar para: release/*
+➡ depois merge em main
+
+📌 Motivo
+Versionamento é parte do processo de release.
+
+
+
+🚀 Situação 8 — Publicação no PyPI
+
+Exemplos
+	•	lib está estável
+	•	testes passaram
+	•	versão definida
+
+✅ Ação correta
+
+git tag v0.2.2
+git push origin v0.2.2
+
+📌 Motivo
+Somente tags disparam publicação.
+
+
+
+🔄 Situação 9 — Refatoração interna
+
+Exemplos
+	•	melhoria de performance
+	•	reorganização de código
+	•	limpeza de duplicações
+
+✅ Enviar para: develop
+
+📌 Motivo
+Refatorações podem exigir ajustes posteriores.
+
+
+
+❌ Situação 10 — “É só um ajuste pequeno”
+
+⚠️ Erro comum
+
+Mesmo que seja:
+	•	1 linha
+	•	só README
+	•	só CI
+
+❌ Não vai direto para main
+
+✅ Sempre passa por develop, exceto hotfix crítico.
+
+
+
+🧠 Regra Mental Rápida (para decidir em 5 segundos)
+
+Isso já pode ser publicado agora?
+
+	•	❌ Não → develop
+	•	✅ Sim → release/* → main → tag
+
+
 ## Exemplo de uso
 
 ### Imports
