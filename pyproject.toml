@@ -3,7 +3,7 @@ name = "model-track"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "cristiano",email = "cristiano2132.ufv@gmail.com"}
+    {name = "Cristiano",email = "cristiano2132.ufv@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
