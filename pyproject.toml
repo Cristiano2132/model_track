@@ -1,6 +1,6 @@
 [project]
-name = "model-track"
-version = "0.1.0"
+name = "model-track-cr"
+version = "0.2.1"
 description = ""
 authors = [
     {name = "Cristiano",email = "cristiano2132.ufv@gmail.com"}
