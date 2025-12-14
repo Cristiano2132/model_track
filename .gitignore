@@ -30,7 +30,6 @@ uv.lock
 # Pytest / Coverage
 # =========================================================
 .pytest_cache/
-.coverage
 coverage.xml
 htmlcov/
 .cache/
