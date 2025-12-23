@@ -75,3 +75,24 @@ def sample_df_woe_stability():
             "target": [1, 0, 0, 1, 1, 0],
         }
     )
+
+
+@pytest.fixture
+def global_woe_numeric_category_mapper():
+    return pd.DataFrame(
+        {
+            "income": ["10", "20", "30", "40", "50", "60", "__TOTAL__"],
+            "woe": [-0.8, -0.6, -0.1, 0.1, 0.5, 0.8, None],
+        }
+    )
+
+
+@pytest.fixture
+def global_woe_intervals_category_mapper():
+    return pd.DataFrame(
+        {
+            "age": ["<=1", "(1,3]", "(3,5]", "(5,7]", "__TOTAL__"],
+            "woe": [-0.9, -0.4, 0.1, 0.6, None],
+        }
+    )
+
