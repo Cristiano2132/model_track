@@ -240,3 +240,39 @@ def test_check_continuous_intervals_false_gap():
     )
 
     assert result is False
+    
+def test_is_interval_like_all_intervals():
+    mapper = CategoryMapper()
+
+    categories = ["<=1", "(1,3]", "(3,5]", "(5,7]"]
+
+    assert mapper._is_interval_like(categories) is True
+
+
+def test_is_interval_false_non_intervals():
+    mapper = CategoryMapper()
+
+    categories = ["A", "B", "C"]
+
+    assert mapper._is_interval_like(categories) is False
+
+def test_parse_interval_less_equal():
+    mapper = CategoryMapper()
+
+    interval = mapper._parse_interval("<=1")
+
+    assert interval == (float("-inf"), 1.0)
+
+def test_parse_interval_greater_equal():
+    mapper = CategoryMapper()
+
+    interval = mapper._parse_interval(">=5")
+
+    assert interval == (5.0, float("inf"))
+
+def test_parse_interval_bounded():
+    mapper = CategoryMapper()
+
+    interval = mapper._parse_interval("(3,7]")
+
+    assert interval == (3.0, 7.0)
