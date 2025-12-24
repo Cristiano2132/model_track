@@ -24,7 +24,7 @@ def test_periods_present(sample_df_woe_by_period):
         date_col="date",
     )
 
-    assert set(result["period"]) == {"2024-01", "2024-02"}
+    assert set(result["date"]) == {"2024-01", "2024-02"}
 
 
 def test_rates_sum_to_one_per_period(sample_df_woe_by_period):
@@ -35,7 +35,7 @@ def test_rates_sum_to_one_per_period(sample_df_woe_by_period):
         date_col="date",
     )
 
-    grouped = result.groupby("period")
+    grouped = result.groupby("date")
 
     for _, g in grouped:
         assert np.isclose(g["event_rate"].sum(), 1.0)
@@ -58,7 +58,7 @@ def test_woe_matches_base_calculator(sample_df_woe_by_period):
             feature_col="feature",
         )
 
-        merged = result[result["period"] == period].merge(
+        merged = result[result["date"] == period].merge(
             base,
             on="feature",
             suffixes=("_period", "_base"),

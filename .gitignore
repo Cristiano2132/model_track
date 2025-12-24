@@ -96,3 +96,6 @@ docs/_build/
 
 # Agents
 *.github/agents
+
+# Ignore entire data directory
+/data

@@ -57,4 +57,16 @@ def test_bin_applier_non_list_bins(sample_df):
     applier = BinApplier(sample_df)
     with pytest.raises(ValueError):
         applier.apply("age", "not a list")
+        
+
+def test_bin_applier_with_none_and_nan():
+    df = pd.DataFrame({
+        "value": [1, 2, None, 4, float('nan'), 6]
+    })
+    applier = BinApplier(df)
+    result = applier.apply("value", [2, 4])
+
+    assert result.dtype == object
+    assert "N/A" in result.values
+    assert sorted([v for v in result.unique() if v != "N/A"]) == ["(2, 4]", "<= 2", "> 4"]
 

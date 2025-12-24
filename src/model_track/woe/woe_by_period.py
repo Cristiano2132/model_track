@@ -70,7 +70,7 @@ class WoeByPeriod:
             )
 
             woe_table = woe_table.copy()
-            woe_table.insert(0, "period", period)
+            woe_table.insert(0, date_col, period)
 
             results.append(woe_table)
 

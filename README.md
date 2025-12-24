@@ -59,6 +59,7 @@ cd model-track-cr
 Instale as dependências:
 
 ```bash
+pip install -e.
 poetry install
 ```
 Ou via Makefile:
@@ -130,11 +131,36 @@ O `pytest` carrega esse arquivo automaticamente.
 
 
 
-1️⃣ Criar branch a partir da main
+📊 Comportamento da CI
+
+| Evento                | Branch   | Testes | Publish |
+|-----------------------|----------|--------|---------|
+| Pull Request          | develop  | Sim    | Não     |
+| Pull Request          | main     | Sim    | Não     |
+| Push                  | develop  | Sim    | Não     |
+| Push                  | main     | Sim    | Não     |
+| Push de tag `vX.Y.Z`  | main     | Sim    | Sim     |
+
+
+
+🌳 Git Flow — Estrutura de Branches
+
+| Branch      | Como criar (git) | Quando usar | Merge com |
+|-------------|------------------|-------------|-----------|
+| main        | —                | Produção / release | release/* |
+| develop     | —                | Base do desenvolvimento | feature/*, fix/* |
+| feature/*   | git checkout develop<br>git pull<br>git checkout -b feature/nome | Nova funcionalidade | develop |
+| fix/*       | git checkout develop<br>git pull<br>git checkout -b fix/nome | Correção pontual | develop |
+| release/*   | git checkout develop<br>git pull<br>git checkout -b release/x.y.z | Preparar release | main |
+
+
+
+
+1️⃣ Criar branch a partir da develop
 
 ```bash
-git checkout main
-git pull origin main
+git checkout develop
+git pull origin develop
 git checkout -b feature/nome-da-feature
 ```
 Ou para correções:
@@ -176,80 +202,354 @@ O PR só será aceito se:
 *	cobertura mínima for respeitada
 *	arquitetura estiver consistente
 
----
-🚢 Processo de Release e Publicação (Git Flow + Poetry)
-____
-🔖 Versionamento Semântico
-
-Usamos Poetry para versionamento:
-*	patch → correções (0.1.0 → 0.1.1)
-*	minor → novas funcionalidades (0.1.0 → 0.2.0)
-*	major → breaking changes (1.0.0 → 2.0.0)
 
 
-
-1️⃣ Criar branch de release
+**Criar tag e publicar**
 
 ```bash
 git checkout main
 git pull origin main
-git checkout -b release/patch
-```
-
-
-
-2️⃣ Atualizar versão automaticamente
-```bash
-poetry version patch
-```
-Exemplo:
-
-Bumping version from `0.1.0` to `0.1.1`
-
-
-
-
-3️⃣ Commit da versão
-```bash
-git add pyproject.toml
-git commit -m "Bump version to 0.1.1"
-```
-
-
-
-4️⃣ Push da branch de release
-```bash
-git push origin release/patch
-```
-
-
-
-5️⃣ Abrir Pull Request → main
-*	Base: `main`
-*	Compare: `release/patch`
-
-A CI será executada automaticamente.
-
-
-
-6️⃣ Merge do PR
-
-Após aprovação e CI verde.
-
-
-
-7️⃣ Criar tag e publicar
-```bash
-git checkout main
-git pull origin main
-
-git tag v0.1.1
-git push origin v0.1.1
+poetry version patch 
+# vai exibir a nova versao vx.x.xxx
+git tag vx.x.xxx
+git push origin vx.x.xxx
 ```
 👉 A GitHub Action de publish será disparada automaticamente
 👉 O pacote será publicado no PyPI
 
 
+🧭 Guia Prático de Decisão — Para Onde Enviar Minha Mudança?
+
+🎯 Regra de Ouro
+	•	develop → integração contínua, mudanças em evolução
+	•	main → código estável, pronto para release
+	•	tag → dispara publicação (PyPI)
+
+
+📌 Situações Comuns e Decisão Correta
+
+📝 Situação 1 — Atualização de README
+
+Exemplos
+	•	adicionar exemplos de uso
+	•	corrigir instruções de Git Flow
+	•	documentar CI, TDD ou versionamento
+
+✅ Enviar para: develop
+❌ Não enviar direto para: main
+
+📌 Motivo
+Documentação pode evoluir, receber ajustes e revisões antes de ser considerada final.
+
+
+⚙️ Situação 2 — Ajuste ou melhoria no CI
+
+Exemplos
+	•	adicionar suporte a Python 3.13
+	•	alterar matriz de testes
+	•	ajustar cache ou dependências
+
+✅ Enviar para: develop
+❌ Não enviar direto para: main
+
+📌 Motivo
+CI é parte da infraestrutura e pode exigir iterações até ficar estável.
+
+
+🧪 Situação 3 — Novo teste (sem alterar código)
+
+Exemplos
+	•	adicionar testes de borda
+	•	aumentar cobertura
+	•	corrigir teste frágil
+
+✅ Enviar para: develop
+
+📌 Motivo
+Testes fazem parte do ciclo de integração contínua.
+
+
+🧩 Situação 4 — Nova funcionalidade
+
+Exemplos
+	•	novo método de binning
+	•	novo cálculo de estabilidade
+	•	nova métrica estatística
+
+✅ Enviar para: develop
+📌 via feature/*
+
+❌ Nunca direto para: main
+
+
+
+🐞 Situação 5 — Correção de bug (não crítico)
+
+Exemplos
+	•	erro de cálculo em edge case
+	•	bug detectado em teste
+	•	ajuste interno sem impacto imediato
+
+✅ Enviar para: develop
+📌 via fix/*
+
+
+🚨 Situação 6 — Hotfix crítico em produção
+
+Exemplos
+	•	bug quebra import do pacote
+	•	erro que impede uso da lib publicada
+
+✅ Enviar para: main
+📌 via hotfix/*
+
+Depois:
+	•	merge também em develop
+
+📌 Motivo
+Produção está quebrada → correção imediata.
+
+
+
+🔖 Situação 7 — Atualização de versão
+
+Exemplos
+	•	poetry version patch
+	•	poetry version minor
+
+✅ Enviar para: release/*
+➡ depois merge em main
+
+📌 Motivo
+Versionamento é parte do processo de release.
+
+
+
+🚀 Situação 8 — Publicação no PyPI
+
+Exemplos
+	•	lib está estável
+	•	testes passaram
+	•	versão definida
+
+✅ Ação correta
+
+git tag v0.2.2
+git push origin v0.2.2
+
+📌 Motivo
+Somente tags disparam publicação.
+
+
+
+🔄 Situação 9 — Refatoração interna
+
+Exemplos
+	•	melhoria de performance
+	•	reorganização de código
+	•	limpeza de duplicações
+
+✅ Enviar para: develop
+
+📌 Motivo
+Refatorações podem exigir ajustes posteriores.
+
+
+
+❌ Situação 10 — “É só um ajuste pequeno”
+
+⚠️ Erro comum
+
+Mesmo que seja:
+	•	1 linha
+	•	só README
+	•	só CI
+
+❌ Não vai direto para main
+
+✅ Sempre passa por develop, exceto hotfix crítico.
+
+
+
+🧠 Regra Mental Rápida (para decidir em 5 segundos)
+
+Isso já pode ser publicado agora?
+
+	•	❌ Não → develop
+	•	✅ Sim → release/* → main → tag
+
+
+## Exemplo de uso
+
+### Imports
+```python
+from model_track.binning import (
+    BinApplier,
+    TreeBinner,
+    QuantileBinner
+)
+
+from model_track.woe import (
+    WoeCalculator,
+    WoeByPeriod
+)
+from model_track.stats import (
+    get_summary
+)
+from model_track.stability.woe import (
+    WoeStability
+)
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+### Gerar dados para exemplo
+```python
+np.random.seed(42)
+
+n_per_period = 50
+periods = ["2024-01", "2024-02", "2024-03", "2024-04"]
+
+rows = []
+
+for period in periods:
+    idade = np.random.normal(loc=40, scale=12, size=n_per_period).clip(18, 75)
+    renda = np.random.lognormal(mean=8.2, sigma=0.5, size=n_per_period)
+
+    # ----- introduzindo missing -----
+    idade[np.random.rand(n_per_period) < 0.05] = np.nan
+    renda[np.random.rand(n_per_period) < 0.05] = np.nan
+
+    # ----- probabilidade do evento (default, fraude, etc.) -----
+    prob_event = (
+        0.15
+        + 0.002 * (idade < 25)
+        + 0.003 * (idade > 60)
+        + 0.004 * (renda < 2500)
+    )
+
+    prob_event = np.clip(prob_event, 0.02, 0.7)
+
+    vr = np.random.binomial(1, prob_event)
+
+    rows.append(
+        pd.DataFrame(
+            {
+                "idade": idade,
+                "renda": renda,
+                "vr": vr,
+                "period": period,
+            }
+        )
+    )
+
+df = pd.concat(rows, ignore_index=True)
+df["period"] = pd.to_datetime(df["period"], format="%Y-%m")
+# ----- Summary inicial -----
+df_summary = get_summary(df=df)
+df_summary
+```
+
+### Categorização
+```python
+target = "vr"
+
+binner = TreeBinner(
+    max_depth=2,
+    min_samples_leaf=1
+)
+binner.fit(df, feature='renda', target=target)
+bins = binner.bins_
+bins = [round(b, 2) for b in bins]
+applier = BinApplier(df)
+df[f"{'renda'}_cat"] = applier.apply('renda', bins)
+
+binner = QuantileBinner(n_bins=3)
+binner.fit(df, feature='idade')
+bins = binner.bins_
+bins = [round(b, 2) for b in bins]
+applier = BinApplier(df)
+df[f"{'idade'}_cat"] = applier.apply('idade', bins)
+
+# ----- Tratamento explícito de missing pós-binning -----
+for feature in features:
+    df[f"{feature}_cat"] = (
+        df[f"{feature}_cat"]
+        .astype("object")
+        .fillna("N/A")
+    )
+
+# ----- Summary após binning -----
+get_summary(df=df)
+````
+### Calcular woe e iv
+
+```python
+
+woe_tables = {}
+
+for feature in features:
+    woe_table = WoeCalculator.compute_table(
+        df=df,
+        target_col=target,
+        feature_col=f"{feature}_cat",
+        event_value=1,
+        add_totals=True,
+    )
+
+
+
+    print(f"\nWOE / IV — {feature.upper()}")
+    display(woe_table)
+
+
+# %%
+# ----- Exemplo de mapeamento WOE -----
+woe_mapping_renda = WoeCalculator.compute_mapping(
+    df=df,
+    target_col=target,
+    feature_col="renda_cat",
+)
+
+woe_mapping_renda
+
+# %%
+df_result = WoeByPeriod.compute(
+        df=df,
+        target_col='vr',
+        feature_col="renda_cat",
+        date_col="period",
+    )
+
+df_result
+```
+### Verificar estabilidade do woe
+
+```python
+ws = WoeStability(df=df, date_col="period")
+
+global_woe = ws.global_table(
+    feature_col="renda_cat",
+    target_col="vr",
+)
+
+
+# tabela global
+global_woe = ws.global_table(
+    feature_col="renda_cat",
+    target_col="vr",
+)
+display(global_woe)
+# gráfico em subplot existente
+fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+ws.generate_view(
+    feature_col="idade_cat",
+    target_col="vr",
+    ax=ax,
+)
+
+```
 
 📚 Roadmap (em evolução)
 *	Estabilidade de WOE por safra
