@@ -123,16 +123,16 @@ class CategoryMapper:
     ) -> str:
         values = sorted(map(float, categories))
 
-        # lower edge
-        if values[0] == global_min:
-            return f"<={int(values[-1])}"
+        low = values[0]
+        high = values[-1]
 
-        # upper edge
-        if values[-1] == global_max:
-            return f">={int(values[0])}"
+        if low == global_min:
+            return f"<={self._fmt(high)}"
 
-        # middle group
-        return f"[{int(values[0])}, {int(values[-1])}]"
+        if high == global_max:
+            return f">={self._fmt(low)}"
+
+        return f"[{self._fmt(low)}, {self._fmt(high)}]"
 
     def _all_numeric(self, categories: List[str]) -> bool:
         try:
@@ -177,14 +177,13 @@ class CategoryMapper:
 
         # (-inf, x]
         if has_minus_inf and not has_plus_inf:
-            return f"<={int(max_upper)}"
+            return f"<={self._fmt(max_upper)}"
 
         # [x, +inf)
         if has_plus_inf and not has_minus_inf:
-            return f">={int(min_lower)}"
-
+            return f">={self._fmt(min_lower)}"
         # fully bounded interval
-        return f"({int(min_lower)},{int(max_upper)}]"
+        return f"({self._fmt(min_lower)},{self._fmt(max_upper)}]"
 
     def _parse_interval(self, label: str):
         label = label.strip()
@@ -208,3 +207,8 @@ class CategoryMapper:
             if current_upper != next_lower:
                 return False
         return True
+
+    def _fmt(self, x: float) -> str:
+        if x.is_integer():
+            return str(int(x))
+        return str(x)
