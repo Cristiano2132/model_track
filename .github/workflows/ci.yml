@@ -2,15 +2,10 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main ]
     tags:
       - "v*"
   pull_request:
-    branches:
-      - develop
-      - main
 
 jobs:
   test:
@@ -41,3 +36,4 @@ jobs:
 
       - name: Run tests
         run: poetry run pytest --cov=src/model_track --cov-report=term-missing
+
